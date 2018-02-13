@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 // import { Note } from './note.js';
+import { Referrable } from './referrable.js'
 import { Bubble } from './bubbles.js';
 export class SVGSheet extends Component{
   constructor(props){
@@ -11,9 +12,10 @@ export class SVGSheet extends Component{
     this.lineBuffer = [];
     this.noteId = 1;
     this.note = null; //currently processed note
-    this.testNote = {title:"first", text:"sometext", x: 100, y:100, id:this.noteId++};
+    // this.testNote = {title:"first", text:"sometext", x: 100, y:100, id:this.noteId++};
     // this.notes = [this.testNote];
-    this.state= {notes :[this.testNote]};
+    this.state = {notes:[]};
+    // this.state= {notes :[this.testNote]};
   }
 
   // getInitialState(){
@@ -43,12 +45,22 @@ export class SVGSheet extends Component{
       var posA = "M" + this.currentLine.start.x + " " + this.currentLine.start.y;
       var posB = "L" + this.currentLine.end.x + " " + this.currentLine.end.y;
       this.path.setAttribute("d", posA + posB);
-      this.note.x = pos.x;
-      this.note.y = pos.y;
+      this.note.style.left = pos.x + "px";
+      this.note.style.top = pos.y + "px";
+
+
+
+      this.note.addEventListener("mouseup", this.noteMouseUp)
+      // this.movelatestNoteTo(pos);
     }
     //send event to parent for processing
     // this.onMoveEvent(e);
 
+  }
+
+  noteMouseUp=(e)=>{
+    this.mouseup(e);
+    this.note.removeEventListener("mouseup", this.noteMouseUp);
   }
 
   mouseup=(e)=>{
@@ -82,16 +94,31 @@ export class SVGSheet extends Component{
     this.svgDomRef.addEventListener("mouseup",this.mouseup);
   }
 
+  movelatestNoteTo=(pos)=>{
+    var note = this.state.notes.pop()
+    note.x = pos.x;
+    note.y = pos.y;
+    this.setState({notes: this.state.notes.concat([note])})
+  }
+
+  refer=(r)=>{
+    console.log(r);
+    this.note = r;
+  }
+
   render(){
-    return <div style={{width:"100vw", height:"100vh"}}><svg className="svg-sheet"
+    return <div style={{width:"100vw", height:"100vh"}}>
+    {
+      this.state.notes.map(n=>{
+        // return <Bubble key={n.id} title={n.title} text={n.text} x={n.x} y={n.y}></Bubble>
+        return <Referrable key={n.id} refer={this.refer}></Referrable>
+      })
+    }
+    <svg className="svg-sheet"
     ref={r=>{this.svgDomRef = r;}}
     onMouseDown={this.onMouseDown}
     ></svg>
-    {
-      this.state.notes.map(n=>{
-        return <Bubble key={n.id} title={n.title} text={n.text} x={n.x} y={n.y}></Bubble>
-      })
-    }
+
     </div>
   }
 }

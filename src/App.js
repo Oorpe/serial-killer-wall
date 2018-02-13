@@ -1,28 +1,26 @@
 import React, { Component } from 'react';
 import { Note } from './components/note.js';
 import { SVGSheet } from './components/svgstuff.js';
+import { Referrable } from './components/referrable.js';
 import logo from './logo.svg';
 import './App.css';
 
 class App extends Component {
-  //while dragging, reposition latest note according to event coords
-  onMoveEvent(e){
-    // console.log("parent:",e)
-  }
-  //here, create a new note node with event's coords and append to note list
-  onMouseDownEvent(e){
 
+  referral=(r)=>{
+    // console.log("refer:",r);
+    var pos = 0;
+    r.style.top = "0px";
+    // setInterval(()=>{
+    //   r.style.top = (pos+=1) + "px";
+    //   // console.log(pos)
+    // },100)
   }
-  //here, lock the note in place
-  onMouseUpEvent(e){
-
-  }
-
   render() {
     return (
       <div className="App">
-
-        <SVGSheet onMoveEvent={this.onMoveEvent}></SVGSheet>
+        <Referrable refer={this.referral}></Referrable>
+        <SVGSheet></SVGSheet>
       </div>
     );
   }
