@@ -13,7 +13,7 @@ export class SVGSheet extends Component{
     this.noteId = 1;
     this.note = null; //currently processed note
     // this.testNote = {title:"first", text:"sometext", x: 100, y:100, id:this.noteId++};
-    // this.notes = [this.testNote];
+    this.notes = [];
     this.state = {notes:[]};
     // this.state= {notes :[this.testNote]};
   }
@@ -42,13 +42,15 @@ export class SVGSheet extends Component{
     if(this.path){
       var pos = this.getMousePosition(e);
       this.currentLine.end = pos;
-      var posA = "M" + this.currentLine.start.x + " " + this.currentLine.start.y;
-      var posB = "L" + this.currentLine.end.x + " " + this.currentLine.end.y;
-      this.path.setAttribute("d", posA + posB);
+      // var posA = "M" + this.currentLine.start.x + " " + this.currentLine.start.y;
+      // var posB = "L" + this.currentLine.end.x + " " + this.currentLine.end.y;
+      // this.path.setAttribute("d", posA + posB);
       this.note.style.left = pos.x + "px";
       this.note.style.top = pos.y + "px";
-
-
+      console.log("note:",this.note);
+      this.setState({notes: this.state.notes.concat([
+              this.note
+          ])})
 
       this.note.addEventListener("mouseup", this.noteMouseUp)
       // this.movelatestNoteTo(pos);
@@ -72,19 +74,22 @@ export class SVGSheet extends Component{
 
   onMouseDown=(e)=>{
     console.log(e)
-    this.path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    this.path.setAttribute("fill", "none");
-    this.path.setAttribute("stroke", "#000");
-    this.path.setAttribute("stroke-width", 2);
+    console.log(this.svgDomRef);
+    // this.path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    // this.path.setAttribute("fill", "none");
+    // this.path.setAttribute("stroke", "#000");
+    // this.path.setAttribute("stroke-width", 2);
     this.rect = this.svgDomRef.getBoundingClientRect();
-    this.svgDomRef.appendChild(this.path);
+    // this.svgDomRef.appendChild(this.path);
     var pos = this.getMousePosition(e);
     this.currentLine.start = pos;
-    this.lineBuffer.push(this.path)
-    this.note = {title:"note!", text:"note-text", x:pos.x, y:pos.y, id:this.noteId++}
-    // this.notes= this.notes.concat([this.note]);
+    let note = {title:"note!", text:"note-text", x:pos.x, y:pos.y, id:this.noteId++};
+    // this.movelatestNoteTo(pos);
+    // this.lineBuffer.push(this.path)
+    // this.note = {title:"note!", text:"note-text", x:pos.x, y:pos.y, id:this.noteId++}
+    this.notes= this.notes.concat([note]);
     this.setState({notes: this.state.notes.concat([
-            this.note
+            note
         ])})
     // this.setState({notes:this.state.notes.concat([this.note])})
     // console.log(this.notes)
@@ -107,17 +112,13 @@ export class SVGSheet extends Component{
   }
 
   render(){
-    return <div style={{width:"100vw", height:"100vh"}}>
+    return <div id={"tausta"} ref={r=>this.svgDomRef=r} onMouseDown={this.onMouseDown} style={{width:"100vw", height:"100vh"}}>
     {
       this.state.notes.map(n=>{
-        // return <Bubble key={n.id} title={n.title} text={n.text} x={n.x} y={n.y}></Bubble>
-        return <Referrable key={n.id} refer={this.refer}></Referrable>
+        return <Bubble key={n.id} title={n.title} text={n.text} x={n.x} y={n.y}></Bubble>
+        // return <Referrable key={n.id} refer={this.refer}></Referrable>
       })
     }
-    <svg className="svg-sheet"
-    ref={r=>{this.svgDomRef = r;}}
-    onMouseDown={this.onMouseDown}
-    ></svg>
 
     </div>
   }

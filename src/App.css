@@ -42,6 +42,11 @@
   box-shadow: 3px 6px 3px 2px rgba(0,0,0,0.3);
 }
 
+#container{
+  width: 100vw;
+  height: 100vh;
+}
+
 .svg-sheet{
   position: absolute;
   top:0px;
